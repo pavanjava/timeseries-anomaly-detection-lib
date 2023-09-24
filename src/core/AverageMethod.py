@@ -3,11 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+pd.set_option('mode.chained_assignment', None)
+
+
 class MovingAverage:
-    def load_data(self, df: pd.DataFrame, datetime_column=None, target_column=None):
+
+    def initialize(self, df: pd.DataFrame, datetime_column=None, target_column=None):
         """Load time series data & process the data frame"""
         project_data = df
-        project_data['timestamp'] = pd.to_datetime(project_data[datetime_column])
+        project_data['timestamp'] = pd.to_datetime(project_data[datetime_column], format='%d/%m/%Y %H:%M:%S')
         project_data[target_column] = pd.to_numeric(project_data[target_column], errors='coerce')
         project_data = project_data[["timestamp", target_column]]
         project_data.fillna(value=project_data[target_column].mean(), inplace=True)
@@ -33,17 +37,19 @@ class MovingAverage:
         anomalies = df[deviation.abs() > threshold]
         return anomalies, ma, threshold
 
-    def plot_anomalies(self, df, anomalies, ma, threshold, target_column=None):
+    def plot_anomalies(self, df, anomalies, ma, threshold, data_label_name, anomalie_label_name, mvng_avg_label_name, threshold_label_name, plot_title_name, xlabel_name, ylabel_name, image_name, target_column=None):
         # Plot the temperature readings and the anomalies
         plt.subplots(figsize=(14, 10))  # MODIFICATION, inserted
-        plt.plot(df['timestamp'], df[target_column], color='blue', label='Power Consumption Readings')
-        plt.scatter(anomalies['timestamp'], anomalies[target_column], color='red', label='Anomalies')
-        plt.plot(df['timestamp'], ma, color='green', label='Moving Average')
-        plt.fill_between(df['timestamp'], ma - threshold, ma + threshold, color='gray', alpha=0.2, label='Threshold')
+
+        plt.plot(df['timestamp'], df[target_column], color='yellow', label=data_label_name)
+        plt.scatter(anomalies['timestamp'], anomalies[target_column], color='red', label=anomalie_label_name)
+        plt.plot(df['timestamp'], ma, color='green', label=mvng_avg_label_name)
+        plt.fill_between(df['timestamp'], ma - threshold, ma + threshold, color='gray', alpha=0.2, label=threshold_label_name)
+
         plt.legend()
-        plt.title('Power consumption Anomaly Detection')
-        plt.xlabel('Date')
-        plt.ylabel('Consumption ')
+        plt.title(plot_title_name)
+        plt.xlabel(xlabel_name)
+        plt.ylabel(ylabel_name)
         plt.grid()
-        plt.savefig("moving_avg_anomaly_plot.png")
+        plt.savefig(image_name)
         plt.show()

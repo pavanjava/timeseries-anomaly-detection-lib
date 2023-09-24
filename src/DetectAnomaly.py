@@ -8,7 +8,7 @@ def compute():
 
     df["DateTime"] = df['Date']+" "+df["Time"]
 
-    df = moving_avg.load_data(df=df, datetime_column="DateTime", target_column="Global_active_power")
+    df = moving_avg.initialize(df=df, datetime_column="DateTime", target_column="Global_active_power")
 
     print("Target Data Frame processing complete")
 
@@ -16,8 +16,12 @@ def compute():
 
     print("anomalies, ma, threshold computed")
 
-    moving_avg.plot_anomalies(df=df,target_column="Global_active_power", anomalies=anomalies, ma=ma, threshold=threshold)
+    moving_avg.plot_anomalies(df=df,target_column="Global_active_power", anomalies=anomalies, ma=ma, threshold=threshold,
+                              anomalie_label_name="Anomalies", mvng_avg_label_name="Moving Average",
+                              data_label_name="Power consumption data", threshold_label_name="Threshold", image_name="anomaly",
+                              xlabel_name="Date", ylabel_name="power consumption",plot_title_name="Anomaly Detection")
 
     print("anomauly detection complete")
+
 
 compute()
